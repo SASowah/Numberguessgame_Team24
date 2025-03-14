@@ -7,10 +7,10 @@ pipeline {
 
     environment {
         PROJECT_NAME = "NumberGuessGame"
-        ARTIFACT = "target/NumberGuessGame-1.0-SNAPSHOT.war"
+        ARTIFACT = "target/NumberGuessGame-2.0-SNAPSHOT.war"
         DEPLOY_DIR = "/home/ec2-user/apache-tomcat-7.0.94/webapps"
         TOMCAT_USER = "ec2-user"
-        SERVER_IP = "ec2-user@3.149.248.77" // 🔥 Replace with your Tomcat Server IP
+        SERVER_IP = "ec2-user@13.60.241.144" // 🔥 Replace with your Tomcat Server IP
         
     }
     
