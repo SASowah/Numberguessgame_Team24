@@ -4,16 +4,14 @@ pipeline {
     environment {
         PROJECT_NAME = "NumberGuessGame"
         ARTIFACT = "target/NumberGuessGame-2.0-SNAPSHOT.war"
-        DEPLOY_DIR = "/home/ec2-user/apache-tomcat-7.0.94/webapps"
-        TOMCAT_USER = "ec2-user"
         SERVER_IP = "13.60.241.144"  /* Replace with your actual Tomcat Server IP */
-        TOMCAT_URL = "http://${SERVER_IP}:8080/manager/text"  // Define Tomcat Manager URL
+        TOMCAT_URL = "http://${SERVER_IP}:8080/manager/text"  // Tomcat Manager URL
     }
     
     stages {
         stage('Clone Repository') {
             steps {
-                 git branch: 'main', url: 'https://github.com/saakanbi/Numberguessgame_Team24.git'
+                git branch: 'main', url: 'https://github.com/saakanbi/Numberguessgame_Team24.git'
             }
         }
 
@@ -28,8 +26,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'tomcat-credentials', usernameVariable: 'TOMCAT_USER', passwordVariable: 'TOMCAT_PASSWORD')]) {
                         sh """
-                        scp ${ARTIFACT} ${TOMCAT_USER}@${SERVER_IP}:${DEPLOY_DIR}/NumberGuessGame.war
-                        ssh ${TOMCAT_USER}@${SERVER_IP} "sudo systemctl restart tomcat"
+                        curl -v --user $TOMCAT_USER:$TOMCAT_PASSWORD --upload-file ${ARTIFACT} ${TOMCAT_URL}/deploy?path=/${PROJECT_NAME}
                         """
                     }
                 }
