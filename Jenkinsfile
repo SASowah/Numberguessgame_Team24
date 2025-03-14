@@ -1,17 +1,13 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven'  // Make sure Maven is configured in Jenkins
-    }
-
     environment {
         PROJECT_NAME = "NumberGuessGame"
         ARTIFACT = "target/NumberGuessGame-2.0-SNAPSHOT.war"
         DEPLOY_DIR = "/home/ec2-user/apache-tomcat-7.0.94/webapps"
         TOMCAT_USER = "ec2-user"
-        SERVER_IP = "ec2-user@13.60.241.144" // 🔥 Replace with your Tomcat Server IP
-        
+        SERVER_IP = "13.60.241.144"  /* Replace with your actual Tomcat Server IP */
+        TOMCAT_URL = "http://${SERVER_IP}:8080/manager/text"  // Define Tomcat Manager URL
     }
     
     stages {
@@ -30,12 +26,10 @@ pipeline {
         stage('Deploy to Tomcat') {
             steps {
                 script {
-                    def warFile = "target/NumberGuessGame-1.0-SNAPSHOT.war"
-                    def tomcatDeployUrl = "${TOMCAT_URL}/deploy?path=/NumberGuessGame"
-
                     withCredentials([usernamePassword(credentialsId: 'tomcat-credentials', usernameVariable: 'TOMCAT_USER', passwordVariable: 'TOMCAT_PASSWORD')]) {
                         sh """
-                        curl --upload-file ${warFile} --user $TOMCAT_USER:$TOMCAT_PASSWORD ${tomcatDeployUrl}
+                        scp ${ARTIFACT} ${TOMCAT_USER}@${SERVER_IP}:${DEPLOY_DIR}/NumberGuessGame.war
+                        ssh ${TOMCAT_USER}@${SERVER_IP} "sudo systemctl restart tomcat"
                         """
                     }
                 }
